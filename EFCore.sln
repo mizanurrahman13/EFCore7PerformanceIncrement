@@ -5,7 +5,9 @@ VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B2B990AB-96BB-4585-BB39-63CA7250026A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCore", "EFCore\EFCore.csproj", "{4E979A62-677F-41E4-A43D-7FED1F2DC51D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCore", "EFCore\EFCore.csproj", "{4E979A62-677F-41E4-A43D-7FED1F2DC51D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gatherly.Persistence", "Gatherly.Persistence\Gatherly.Persistence.csproj", "{88AD8801-4CF1-4797-BD41-A3E234C60B67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,12 +19,17 @@ Global
 		{4E979A62-677F-41E4-A43D-7FED1F2DC51D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E979A62-677F-41E4-A43D-7FED1F2DC51D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E979A62-677F-41E4-A43D-7FED1F2DC51D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88AD8801-4CF1-4797-BD41-A3E234C60B67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88AD8801-4CF1-4797-BD41-A3E234C60B67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88AD8801-4CF1-4797-BD41-A3E234C60B67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88AD8801-4CF1-4797-BD41-A3E234C60B67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4E979A62-677F-41E4-A43D-7FED1F2DC51D} = {B2B990AB-96BB-4585-BB39-63CA7250026A}
+		{88AD8801-4CF1-4797-BD41-A3E234C60B67} = {B2B990AB-96BB-4585-BB39-63CA7250026A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2D9A044E-90A7-43FA-A90B-AA551989293C}

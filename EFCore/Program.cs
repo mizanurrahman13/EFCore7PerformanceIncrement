@@ -1,13 +1,37 @@
 using Dapper;
 using EFCore;
 using EFCore.Entities;
+using EFCore.Options;
+using Gatherly.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.ConfigureOptions<DatabaseOptionsSetup>();
+
+var connectionString = builder.Configuration.GetConnectionString("Database");
+
+builder.Services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
+
 builder.Services.AddDbContext<DatabaseContext>(
-    o => o.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
+    (ServiceProvider, dbContextOptionBuilder) =>
+    {
+        var databaseOptions = ServiceProvider.GetService<IOptions<DatabaseOptions>>()!.Value;
+
+        var auditableInterceptor = ServiceProvider.GetService<UpdateAuditableEntitiesInterceptor>()!;
+
+        dbContextOptionBuilder.UseSqlServer(databaseOptions.ConnectionString, sqlServerAction =>
+        {
+            sqlServerAction.EnableRetryOnFailure(databaseOptions.MaxRetryCount);
+            sqlServerAction.CommandTimeout(databaseOptions.CommandTimeOut);
+        }).AddInterceptors(
+            auditableInterceptor);
+
+        dbContextOptionBuilder.EnableDetailedErrors(databaseOptions.EnableDetailedErrors);
+        dbContextOptionBuilder.EnableSensitiveDataLogging(databaseOptions.EnableSensitiveDataLogging);
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -36,7 +60,7 @@ app.MapPut("increase-salaries", async (int companyId, DatabaseContext dbContext)
         employee.Salary += 1.1m;
 
     company.LastSalaryUpdateUtc = DateTime.UtcNow;
-    
+
     await dbContext.SaveChangesAsync();
 
     return Results.NoContent();
@@ -86,6 +110,21 @@ app.MapPut("increase-salaries-sql-dapper", async (int companyId, DatabaseContext
     await dbContext.Database.CommitTransactionAsync();
 
     return Results.NoContent();
+});
+
+app.MapGet("companies/{companyId:int}", async (int companyId, DatabaseContext dbContext) =>
+{
+    var company = await dbContext
+        .Set<Company>()
+        .AsNoTracking()
+        .FirstOrDefaultAsync(c => c.Id == companyId);
+
+    if (company == null)
+        return Results.NotFound($"The company with Id '{companyId}' was not found.");
+
+    var response = new Company { Id = company.Id, Name = company.Name };
+
+    return Results.Ok(response);
 });
 
 app.Run();
